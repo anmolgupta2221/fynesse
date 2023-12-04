@@ -20,6 +20,14 @@ def write_credentials(username, password):
                             'password': password}
         yaml.dump(credentials_dict, file)
 
+def database_access(url, port):
+    database_details = {"url": url,
+                    "port": port}
+    with open("credentials.yaml") as file:
+        credentials = yaml.safe_load(file)
+        username = credentials["username"]
+        password = credentials["password"]
+        url = database_details["url"]
 
 
 def data():
