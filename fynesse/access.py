@@ -108,8 +108,7 @@ def head(conn, table, n=5):
 def create_index(conn, index_name, table, col):
     cur = conn.cursor()
     load_data_query = f"""
-        CREATE INDEX {index_name} ON {table} {(col)}
-        ;
+        CREATE INDEX {index_name} ON {table} ({col});
     """
     cur.execute(load_data_query)
 
