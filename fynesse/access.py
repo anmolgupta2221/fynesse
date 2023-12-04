@@ -143,7 +143,7 @@ def download_postcode_data(conn):
     cur.execute(load_data_query)
 
     # join the tables on the fly
-def joinq(lat, longit, conn):
+def joinq(conn, lat, longit, box_size = 0.4):
     cur = conn.cursor()
     query = f"""
         SELECT
@@ -166,8 +166,8 @@ def joinq(lat, longit, conn):
         JOIN
           postcode_data c ON p.postcode = c.postcode
         WHERE
-            ABS(c.latitude - {lat}) <= 0.4 AND
-            ABS(c.longitude - {longit}) <= 0.4
+            ABS(c.latitude - {lat}) <= box_size AND
+            ABS(c.longitude - {longit}) <= box_size
     """
     property_prices_df = pd.read_sql_query(query, conn)
     return property_prices_df
