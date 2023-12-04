@@ -15,6 +15,12 @@ import yaml
 
 # Code for requesting and storing credentials (username, password) of the RDS
 
+def write_credentials(username, password):
+    with open("credentials.yaml", "w") as file:
+        credentials_dict = {'username': username,
+                            'password': password}
+        yaml.dump(credentials_dict, file)
+
 def database_access(url, port):
     database_details = {"url": url,
                     "port": port}
