@@ -12,6 +12,8 @@ import sqlite"""
 import yaml
 import urllib
 import pymysql
+import urllib.request
+import zipfile
 
 """Place commands in this file to access the data electronically. Don't remove any missing values, or deal with outliers. Make sure you have legalities correct, both intellectual property and personal data privacy rights. Beyond the legal side also think about the ethical issues around this data. """
 
@@ -111,6 +113,35 @@ def create_index(conn, index_name, table, col):
     """
     cur.execute(load_data_query)
 
+# Download postcode data
+def download_postcode_data(conn):
+    zip_url = "https://www.getthedata.com/downloads/open_postcode_geo.csv.zip"
+    zip_filename = "open_postcode_geo.csv.zip"
+
+    # Add a User-Agent header to mimic Chrome
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
+
+    # Create a request with headers
+    request = urllib.request.Request(zip_url, headers=headers)
+
+    # Download the zip file
+    with urllib.request.urlopen(request) as response, open(zip_filename, 'wb') as out_file:
+        out_file.write(response.read())
+
+    # Unzip the file
+    with zipfile.ZipFile(zip_filename, 'r') as zip_ref:
+        zip_ref.extractall()
+
+    # Connect to the database
+    cur = conn.cursor()
+
+    # Load data into the database
+    load_data_query = f"""
+        LOAD DATA LOCAL INFILE 'open_postcode_geo.csv' INTO TABLE `postcode_data`
+        FIELDS TERMINATED BY ',' OPTIONALLY ENCLOSED by '"'
+        LINES STARTING BY '' TERMINATED BY '\n';
+    """
+    cur.execute(load_data_query)
 
 def data():
     """Read the data from the web or local file, returning structured format such as a data frame"""
