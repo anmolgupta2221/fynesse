@@ -53,7 +53,7 @@ def select_top(conn, table,  n):
     return rows
 
 # Download and load data into the database helper function
-def download_and_load_data_years(year, part):
+def download_and_load_data_years(year, part, conn):
     url = f"http://prod.publicdata.landregistry.gov.uk.s3-website-eu-west-1.amazonaws.com/pp-{year}-part{part}.csv"
     filename = f"pp-{year}-part{part}.csv"
 
@@ -73,12 +73,12 @@ def download_and_load_data_years(year, part):
 
 
 # Download and load data into the databse table
-def download_data_task_a(years, parts_per_year):
+def download_data_task_a(years, parts_per_year, conn):
   # Loop through the years and parts to download and load the data
 
   for year in years:
       for part in range(1, parts_per_year + 1):
-          download_and_load_data_years(year, part)
+          download_and_load_data_years(year, part, conn)
 
 # Count the number of rows in input table
 def count_rows(conn, table):
