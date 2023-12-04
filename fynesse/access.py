@@ -13,14 +13,7 @@ import yaml
 
 """Place commands in this file to access the data electronically. Don't remove any missing values, or deal with outliers. Make sure you have legalities correct, both intellectual property and personal data privacy rights. Beyond the legal side also think about the ethical issues around this data. """
 
-# Code for requesting and storing credentials (username, password) of the RDS
-
-def write_credentials(username, password):
-    with open("credentials.yaml", "w") as file:
-        credentials_dict = {'username': username,
-                            'password': password}
-        yaml.dump(credentials_dict, file)
-
+ #Code for accessing credentials saved in the notebook by the user
 def database_access(url, port):
     database_details = {"url": url,
                     "port": port}
@@ -30,6 +23,29 @@ def database_access(url, port):
         password = credentials["password"]
         url = database_details["url"]
     return (credentials, username, password, url)
+
+""" Create a database connection to the MariaDB database specified by the host url and database name.
+    :param user: username
+    :param password: password
+    :param host: host url
+    :param database: database
+    :param port: port number
+    :return: Connection object or None
+"""
+
+def create_connection(user, password, host, database, port=3306):
+    conn = None
+    try:
+        conn = pymysql.connect(user=user,
+                               passwd=password,
+                               host=host,
+                               port=port,
+                               local_infile=1,
+                               db=database
+                               )
+    except Exception as e:
+        print(f"Error connecting to the MariaDB Server: {e}")
+    return conn
 
 
 def data():
