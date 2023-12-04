@@ -19,6 +19,8 @@ def write_credentials(username, password):
         credentials_dict = {'username': username,
                             'password': password}
         yaml.dump(credentials_dict, file)
+    @interact_manual(username=Text(description="Username:"),
+                 password=Password(description="Password:"))
 
 def database_access(url, port):
     database_details = {"url": url,
