@@ -23,7 +23,7 @@ def database_access(url, port):
         username = credentials["username"]
         password = credentials["password"]
         url = database_details["url"]
-    return (credentials,username,password,url)
+    return (credentials, username, password, url)
 
 
 def data():
