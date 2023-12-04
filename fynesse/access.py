@@ -100,9 +100,9 @@ def select_top(conn, table,  n):
 
 # Nice way to view the rows
 def head(conn, table, n=5):
-  rows = select_top(conn, table, n)
-  for r in rows:
-      print(r)
+    rows = select_top(conn, table, n)
+    for r in rows:
+        print(r)
 
 # Create a table index
 def create_index(conn, index_name, table, col):
@@ -142,6 +142,36 @@ def download_postcode_data(conn):
         LINES STARTING BY '' TERMINATED BY '\n';
     """
     cur.execute(load_data_query)
+
+    # join the tables on the fly
+def joinq(lat, longit, conn):
+    cur = conn.cursor()
+    query = f"""
+        SELECT
+          p.price,
+          p.date_of_transfer,
+          p.postcode,
+          p.property_type,
+          p.new_build_flag,
+          p.tenure_type,
+          p.locality,
+          p.town_city,
+          p.district,
+          p.county,
+          c.country,
+          c.latitude,
+          c.longitude,
+          p.db_id
+        FROM
+          pp_data p
+        JOIN
+          postcode_data c ON p.postcode = c.postcode
+        WHERE
+            ABS(c.latitude - {lat}) <= 0.4 AND
+            ABS(c.longitude - {longit}) <= 0.4
+    """
+    property_prices_df = pd.read_sql_query(query, conn)
+    return property_prices_df
 
 def data():
     """Read the data from the web or local file, returning structured format such as a data frame"""
