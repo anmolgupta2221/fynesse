@@ -102,6 +102,16 @@ def head(conn, table, n=5):
   for r in rows:
       print(r)
 
+# Create a table index
+def create_index(conn, index_name, table, col):
+    cur = conn.cursor()
+    load_data_query = f"""
+        CREATE INDEX {index_name} ON {table} {(col)}
+        ;
+    """
+    cur.execute(load_data_query)
+
+
 def data():
     """Read the data from the web or local file, returning structured format such as a data frame"""
     print('hello world')
