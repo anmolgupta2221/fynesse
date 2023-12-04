@@ -14,13 +14,6 @@ import yaml
 """Place commands in this file to access the data electronically. Don't remove any missing values, or deal with outliers. Make sure you have legalities correct, both intellectual property and personal data privacy rights. Beyond the legal side also think about the ethical issues around this data. """
 
 # Code for requesting and storing credentials (username, password) of the RDS
-def write_credentials(username, password):
-    with open("credentials.yaml", "w") as file:
-        credentials_dict = {'username': username,
-                            'password': password}
-        yaml.dump(credentials_dict, file)
-    @interact_manual(username=Text(description="Username:"),
-                 password=Password(description="Password:"))
 
 def database_access(url, port):
     database_details = {"url": url,
