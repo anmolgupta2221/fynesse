@@ -17,6 +17,9 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import mlai
 import mlai.plot as plot
+import ipywidgets as widgets
+from ipywidgets import interact, fixed
+from IPython.display import display
 
 def data():
     """Load the data from access and ensure missing values are correctly encoded as well as indices correct, column names informative, date and times correctly formatted. Return a structured data structure such as a data frame."""
@@ -94,6 +97,22 @@ def graph_maker(north, south, east, west, place_name, df):
   df.plot(ax=ax, color="blue", alpha=0.7, markersize=10)
   plt.tight_layout()
   mlai.write_figure(directory="./maps", filename=f"{place_name}-pois.svg")
+
+def view_df(dataframe, item="all", column=None, number=6):
+    if column is None:
+        column = dataframe.columns[0]
+    if item=="all":
+        display(dataframe.head(number))
+    display(dataframe[dataframe[column]==item].head(number))
+
+def display_data(df, col):
+  number_slider = widgets.IntSlider(min=0, max=15, step=1, value=5)
+  item_select = widgets.Select(options=["all"] + (df[col].unique().tolist()))
+
+  _ = interact(view_df, dataframe=fixed(df),
+              column=fixed(col),
+              item=item_select,
+              number=number_slider)
 
 
 def query(data):
