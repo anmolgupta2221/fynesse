@@ -21,7 +21,8 @@ def data():
     raise NotImplementedError
 
 
-def get_geometries(place_name, latitude, longitude, tag_dict, box_size = 0.2):
+# Get geometries for POIs in an area around a specifed location (location described using latitude and longitude)
+def get_geometries(place_name, latitude, longitude, box_size = 0.2, tag_dict = {"amenity": True, "buildings": True, "historic": True, "leisure": True, "shop": True, "tourism": True, "public transport" : True}):
   place_name = place_name
   latitude = latitude
   longitude = longitude
@@ -29,7 +30,6 @@ def get_geometries(place_name, latitude, longitude, tag_dict, box_size = 0.2):
   south = latitude - box_size/2
   west = longitude - box_size/2
   east = longitude + box_size/2
-
   return ox.geometries_from_bbox(north, south, east, west, tag_dict)
 
 def query(data):
