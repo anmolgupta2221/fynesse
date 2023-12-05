@@ -16,6 +16,7 @@ import osmnx as ox
 import matplotlib.pyplot as plt
 import pandas as pd
 import mlai
+import mlai.plot as plot
 
 def data():
     """Load the data from access and ensure missing values are correctly encoded as well as indices correct, column names informative, date and times correctly formatted. Return a structured data structure such as a data frame."""
@@ -69,7 +70,7 @@ def dataframe_index_cleanup(df):
   return df
 
 def unique_vals_col(df, col):
-   df.col.unique()
+   return df[col].unique()
 
 def graph_maker(north, south, east, west, place_name, df):
   graph = ox.graph_from_bbox(north, south, east, west)
