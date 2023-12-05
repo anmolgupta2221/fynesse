@@ -32,6 +32,7 @@ def get_geometries(place_name, latitude, longitude, box_size = 0.2, tag_dict = {
   east = longitude + box_size/2
   return ox.geometries_from_bbox(north, south, east, west, tag_dict)
 
+#Code to explore the keys within a POIs dataframe
 def explore_keys(pois,keys = ["name", "addr:city", "addr:postcode", "amenity", "building",
         "historic",
         "memorial",
@@ -59,10 +60,14 @@ def explore_keys(pois,keys = ["name", "addr:city", "addr:postcode", "amenity", "
     present_keys = [key for key in keys if key in pois.columns]
     return pois[present_keys]
 
-def dataframe_cleanup(df):
+# cleanup data indexing
+def dataframe_index_cleanup(df):
   df = pd.DataFrame(df)
   df = df.reset_index()
   return df
+
+def unique_vals_col(df, col):
+   df.col.unique()
 
 def query(data):
     """Request user input for some aspect of the data."""
