@@ -93,7 +93,7 @@ def graph_maker(north, south, east, west, place_name, df):
   # Plot all POIs
   df.plot(ax=ax, color="blue", alpha=0.7, markersize=10)
   plt.tight_layout()
-  mlai.write_figure(directory="./maps", filename=f"{placename}-pois.svg")
+  mlai.write_figure(directory="./maps", filename=f"{place_name}-pois.svg")
 
 
 def query(data):
