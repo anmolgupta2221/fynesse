@@ -48,8 +48,8 @@ def explore_keys(keys = ["name", "addr:city", "addr:postcode", "amenity", "build
     
     not_present = []
     for key in keys:
-    if key not in pois.columns:
-        not_present.append(key)
+        if key not in pois.columns:
+          not_present.append(key)
 
     if not_present:
         print(f"These keys were not present: {not_present}")
