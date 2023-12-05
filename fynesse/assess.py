@@ -12,11 +12,25 @@ import sklearn.feature_extraction"""
 
 """Place commands in this file to assess the data you have downloaded. How are missing values encoded, how are outliers encoded? What do columns represent, makes rure they are correctly labeled. How is the data indexed. Crete visualisation routines to assess the data (e.g. in bokeh). Ensure that date formats are correct and correctly timezoned."""
 
+import osmnx as ox
+import matplotlib.pyplot as plt
 
 def data():
     """Load the data from access and ensure missing values are correctly encoded as well as indices correct, column names informative, date and times correctly formatted. Return a structured data structure such as a data frame."""
     df = access.data()
     raise NotImplementedError
+
+
+def get_geometries (place_name, latitude, longitude, tag_dict, box_size = 0.2):
+  place_name = place_name
+  latitude = latitude
+  longitude = longitude
+  north = latitude + box_size/2
+  south = latitude - box_size/2
+  west = longitude - box_size/2
+  east = longitude + box_size/2
+
+  return ox.geometries_from_bbox(north, south, east, west, tag_dict)
 
 def query(data):
     """Request user input for some aspect of the data."""
