@@ -20,6 +20,7 @@ import mlai.plot as plot
 import ipywidgets as widgets
 from ipywidgets import interact, fixed
 from IPython.display import display
+from ukpostcodeutils import validation
 
 def data():
     """Load the data from access and ensure missing values are correctly encoded as well as indices correct, column names informative, date and times correctly formatted. Return a structured data structure such as a data frame."""
@@ -75,6 +76,14 @@ def dataframe_index_cleanup(df):
 # display all the unique values of a column
 def unique_vals_col(df, col):
    return df[col].unique()
+
+
+def validate_postcode(pcode):
+    if validation.is_valid_postcode(pcode):
+        return True
+    else:
+        return False
+
 
 # plot graph of POI
 def graph_maker(north, south, east, west, place_name, df):
