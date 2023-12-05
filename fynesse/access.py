@@ -14,6 +14,7 @@ import urllib
 import pymysql
 import urllib.request
 import zipfile
+import pandas as pd
 
 """Place commands in this file to access the data electronically. Don't remove any missing values, or deal with outliers. Make sure you have legalities correct, both intellectual property and personal data privacy rights. Beyond the legal side also think about the ethical issues around this data. """
 
@@ -75,7 +76,7 @@ def download_and_load_data_years(year, part, conn):
 
 
 # Download and load data into the databse table
-def download_data_task_a(years, parts_per_year, conn):
+def download_data_task_b(years, parts_per_year, conn):
   # Loop through the years and parts to download and load the data
 
   for year in years:
