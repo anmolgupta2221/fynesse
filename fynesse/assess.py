@@ -59,6 +59,11 @@ def explore_keys(pois,keys = ["name", "addr:city", "addr:postcode", "amenity", "
     present_keys = [key for key in keys if key in pois.columns]
     return pois[present_keys]
 
+def dataframe_cleanup(df):
+  df = pd.DataFrame(df)
+  df = df.reset_index()
+  return df
+
 def query(data):
     """Request user input for some aspect of the data."""
     raise NotImplementedError
