@@ -32,6 +32,33 @@ def get_geometries(place_name, latitude, longitude, box_size = 0.2, tag_dict = {
   east = longitude + box_size/2
   return ox.geometries_from_bbox(north, south, east, west, tag_dict)
 
+def explore_keys(keys = ["name", "addr:city", "addr:postcode", "amenity", "building",
+        "historic",
+        "memorial",
+        "religion",
+        "tourism",
+        "education",
+        "emergency",
+        "leisure",
+        "shop",
+        "public_transport",
+        "height",
+        "healthcare",
+        "school"]):
+    
+    not_present = []
+    for key in keys:
+    if key not in pois.columns:
+        not_present.append(key)
+
+    if not_present:
+        print(f"These keys were not present: {not_present}")
+    else:
+        print("All keys were present.")
+    
+    present_keys = [key for key in keys if key in pois.columns]
+    return pois[present_keys]
+
 def query(data):
     """Request user input for some aspect of the data."""
     raise NotImplementedError
