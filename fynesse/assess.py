@@ -72,9 +72,11 @@ def dataframe_index_cleanup(df):
   df = df.reset_index()
   return df
 
+# display all the unique values of a column
 def unique_vals_col(df, col):
    return df[col].unique()
 
+# plot graph of POI
 def graph_maker(north, south, east, west, place_name, df):
   graph = ox.graph_from_bbox(north, south, east, west)
   nodes, edges = ox.graph_to_gdfs(graph)
@@ -98,6 +100,7 @@ def graph_maker(north, south, east, west, place_name, df):
   plt.tight_layout()
   mlai.write_figure(directory="./maps", filename=f"{place_name}-pois.svg")
 
+# Helper function for interactive widget
 def view_df(dataframe, item="all", column=None, number=6):
     if column is None:
         column = dataframe.columns[0]
@@ -105,8 +108,9 @@ def view_df(dataframe, item="all", column=None, number=6):
         display(dataframe.head(number))
     display(dataframe[dataframe[column]==item].head(number))
 
+# Display an interactive widget
 def display_data(df, col):
-  number_slider = widgets.IntSlider(min=0, max=15, step=1, value=5)
+  number_slider = widgets.IntSlider(min=0, max=25, step=1, value=5)
   item_select = widgets.Select(options=["all"] + (df[col].unique().tolist()))
 
   _ = interact(view_df, dataframe=fixed(df),
