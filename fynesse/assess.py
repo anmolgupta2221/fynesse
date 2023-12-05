@@ -32,7 +32,7 @@ def get_geometries(place_name, latitude, longitude, box_size = 0.2, tag_dict = {
   east = longitude + box_size/2
   return ox.geometries_from_bbox(north, south, east, west, tag_dict)
 
-def explore_keys(keys = ["name", "addr:city", "addr:postcode", "amenity", "building",
+def explore_keys(pois,keys = ["name", "addr:city", "addr:postcode", "amenity", "building",
         "historic",
         "memorial",
         "religion",
