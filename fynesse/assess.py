@@ -30,7 +30,7 @@ def get_geometries(place_name, latitude, longitude, box_size = 0.2, tag_dict = {
   south = latitude - box_size/2
   west = longitude - box_size/2
   east = longitude + box_size/2
-  return ox.geometries_from_bbox(north, south, east, west, tag_dict)
+  return (ox.geometries_from_bbox(north, south, east, west, tag_dict), north, south, east, west)
 
 #Code to explore the keys within a POIs dataframe
 def explore_keys(pois,keys = ["name", "addr:city", "addr:postcode", "amenity", "building",
@@ -68,6 +68,30 @@ def dataframe_index_cleanup(df):
 
 def unique_vals_col(df, col):
    df.col.unique()
+
+def graph_maker(north, south, east, west, place_name, df):
+  graph = ox.graph_from_bbox(north, south, east, west)
+  nodes, edges = ox.graph_to_gdfs(graph)
+  area = ox.geocode_to_gdf(place_name)
+
+  fig, ax = plt.subplots(figsize=plot.big_figsize)
+
+  # Plot the footprint
+  area.plot(ax=ax, facecolor="white")
+
+  # Plot street edges
+  edges.plot(ax=ax, linewidth=1, edgecolor="dimgray")
+
+  ax.set_xlim([west, east])
+  ax.set_ylim([south, north])
+  ax.set_xlabel("longitude")
+  ax.set_ylabel("latitude")
+
+  # Plot all POIs
+  df.plot(ax=ax, color="blue", alpha=0.7, markersize=10)
+  plt.tight_layout()
+  mlai.write_figure(directory="./maps", filename=f"{placename}-pois.svg")
+
 
 def query(data):
     """Request user input for some aspect of the data."""
