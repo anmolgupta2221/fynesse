@@ -21,7 +21,7 @@ def data():
     raise NotImplementedError
 
 
-def get_geometries (place_name, latitude, longitude, tag_dict, box_size = 0.2):
+def get_geometries(place_name, latitude, longitude, tag_dict, box_size = 0.2):
   place_name = place_name
   latitude = latitude
   longitude = longitude
