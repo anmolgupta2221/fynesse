@@ -128,8 +128,9 @@ def display_data(df, col):
   
   # Consistent street names
 def capitalize_and_remove_underscores(input_string):
-  result_string = input_string.replace('_', ' ').title()
-  return result_string
+  if type(input_string) == str:
+    result_string = input_string.replace('_', ' ').title()
+    return result_string
 
 
 def query(data):
@@ -143,7 +144,7 @@ def view(data):
 def labelled(data):
     data = dataframe_index_cleanup(data)
     if 'addr:postcode' in data.columns:
-        data['addr:postcode'] = (data["addr:postcode"]).as_type(str)
+        data['addr:postcode'] = (data["addr:postcode"]).astype(str)
         data['addr:postcode'] = data['addr:postcode'].apply(validate_postcode)
     if 'addr:street' in data.columns:
         data['addr:street'] = data['addr:street'].apply(capitalize_and_remove_underscores)
