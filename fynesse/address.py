@@ -71,7 +71,7 @@ def predict_model(design, results_basis, results_basis_0, results_basis_1, resul
 
 # Extract relevant dataframes from the join 
 def extract_relevant_df(latitude, longitude, date, property_box_size, date_range):
-  all_years_properties = fynesse.access.joinq(conn, latitude, longitude, property_box_size)
+  all_years_properties = access.joinq(conn, latitude, longitude, property_box_size)
   input_date = datetime.strptime(date, "%B %Y")
   relevant_years_properties = all_years_properties[(all_years_properties['date_of_transfer'] >= (input_date - timedelta(days=365*date_range))) & (all_years_properties['date_of_transfer'] <= (input_date + timedelta(days=365*date_range)))]
   return relevant_years_properties 
@@ -101,7 +101,7 @@ def count_matching_pois(row, pois, threshold):
 #Function to get the centroid of each geometry and add to pois
 def adjust_pois(pois):
   lat,longit = get_centroid(pois)
-  pois = fynesse.assess.labelled(pois)
+  pois = assess.labelled(pois)
   pois['latitude'] = lat
   pois['longitude'] = longit
   return pois
@@ -151,7 +151,7 @@ def osm_feature_count(df, amenities, schools, healthcare, leisure, public_transp
 def fit_and_predict(latitude, longitude, date, property_box_size = 0.01, date_range = 1, osm_box_size = 0.02, feature_decider = 'variation 1', threshold = 0.01):
   df = extract_relevant_df(latitude, longitude, date, property_box_size, date_range)
   detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l = property_prices_features(df)
-  pois, _,_,_,_ = fynesse.assess.get_geometries(latitude, longitude, osm_box_size, {'amenity':True, 'healthcare':True, 'leisure':True, 'public_transport':True})
+  pois, _,_,_,_ = assess.get_geometries(latitude, longitude, osm_box_size, {'amenity':True, 'healthcare':True, 'leisure':True, 'public_transport':True})
   pois = adjust_pois(pois)
   amenities, schools, healthcare, leisure, public_transport = relevant_pois(pois)
   amenity_count, school_count, healthcare_count, leisure_count, p_trans_count = osm_feature_count(df, amenities, schools, healthcare, leisure, public_transport, threshold)
