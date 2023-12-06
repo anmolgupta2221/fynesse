@@ -69,7 +69,7 @@ def explore_keys(pois,keys = ["name", "addr:city", "addr:postcode", "amenity", "
 # cleanup data indexing
 def dataframe_index_cleanup(df):
   df = pd.DataFrame(df)
-  df = df.reset_index()
+  df = df.reset_index(drop=True)
   return df
 
 # display all the unique values of a column
