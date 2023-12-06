@@ -20,6 +20,9 @@ import pandas as pd
 import statsmodels.api as sm
 import math
 
+from . import access
+from . import assess
+
 # Helper function for applying indicator functions to features
 def indicator_function(row, feature, column_name):
     if row[column_name] == feature:
