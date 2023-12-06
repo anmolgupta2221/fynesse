@@ -143,6 +143,7 @@ def view(data):
 def labelled(data):
     data = dataframe_index_cleanup(data)
     if 'addr:postcode' in data.columns:
+        data['addr:postcode'] = (data["addr:postcode"]).as_type(str)
         data['addr:postcode'] = data['addr:postcode'].apply(validate_postcode)
     if 'addr:street' in data.columns:
         data['addr:street'] = data['addr:street'].apply(capitalize_and_remove_underscores)
