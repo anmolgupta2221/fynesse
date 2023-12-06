@@ -127,9 +127,9 @@ def display_data(df, col):
               number=number_slider)
   
   # Consistent street names
-  def capitalize_and_remove_underscores(input_string):
-    result_string = input_string.replace('_', ' ').title()
-    return result_string
+def capitalize_and_remove_underscores(input_string):
+  result_string = input_string.replace('_', ' ').title()
+  return result_string
 
 
 def query(data):
