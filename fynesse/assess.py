@@ -29,8 +29,7 @@ def data():
 
 
 # Get geometries for POIs in an area around a specifed location (location described using latitude and longitude)
-def get_geometries(place_name, latitude, longitude, box_size = 0.2, tag_dict = {"amenity": True, "buildings": True, "historic": True, "leisure": True, "shop": True, "tourism": True, "public transport" : True}):
-  place_name = place_name
+def get_geometries(latitude, longitude, box_size = 0.2, tag_dict = {"amenity": True, "buildings": True, "historic": True, "leisure": True, "shop": True, "tourism": True, "public transport" : True}):
   latitude = latitude
   longitude = longitude
   north = latitude + box_size/2
@@ -82,7 +81,7 @@ def validate_postcode(pcode):
     if validation.is_valid_postcode(pcode):
         return True
     else:
-        return False
+        return None
 
 
 # plot graph of POI
@@ -142,5 +141,11 @@ def view(data):
     raise NotImplementedError
 
 def labelled(data):
-    """Provide a labelled set of data ready for supervised learning."""
-    raise NotImplementedError
+    data = dataframe_index_cleanup(data)
+    if 'addr:postcode' in data.columns:
+        data['addr:postcode'] = data['addr:postcode'].apply(validate_postcode)
+    if 'addr:street' in data.columns:
+        data['addr:street'] = data['addr:street'].apply(capitalize_and_remove_underscores)
+    return data
+
+
