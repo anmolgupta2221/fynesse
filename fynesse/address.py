@@ -70,7 +70,7 @@ def predict_model(design, results_basis, results_basis_0, results_basis_1, resul
   return(y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3)
 
 # Extract relevant dataframes from the join 
-def extract_relevant_df(latitude, longitude, date, property_box_size, date_range):
+def extract_relevant_df(latitude, longitude, date, property_box_size, date_range, conn):
   all_years_properties = access.joinq(conn, latitude, longitude, property_box_size)
   input_date = datetime.strptime(date, "%B %Y")
   relevant_years_properties = all_years_properties[(all_years_properties['date_of_transfer'] >= (input_date - timedelta(days=365*date_range))) & (all_years_properties['date_of_transfer'] <= (input_date + timedelta(days=365*date_range)))]
@@ -148,8 +148,8 @@ def osm_feature_count(df, amenities, schools, healthcare, leisure, public_transp
   p_trans_count = np.array(df.apply(count_matching_pois, pois=public_transport, threshold = threshold, axis=1))
   return(amenity_count, school_count, healthcare_count, leisure_count, p_trans_count)
 
-def fit_and_predict(latitude, longitude, date, property_box_size = 0.01, date_range = 1, osm_box_size = 0.02, feature_decider = 'variation 1', threshold = 0.01):
-  df = extract_relevant_df(latitude, longitude, date, property_box_size, date_range)
+def fit_and_predict(latitude, longitude, date, conn, property_box_size = 0.01, date_range = 1, osm_box_size = 0.02, feature_decider = 'variation 1', threshold = 0.01):
+  df = extract_relevant_df(latitude, longitude, date, property_box_size, date_range, conn)
   detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l = property_prices_features(df)
   pois, _,_,_,_ = assess.get_geometries(latitude, longitude, osm_box_size, {'amenity':True, 'healthcare':True, 'leisure':True, 'public_transport':True})
   pois = adjust_pois(pois)
