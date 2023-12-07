@@ -171,7 +171,7 @@ def pick_basis(results_basis, results_basis_0, results_basis_1, results_basis_2,
 
 # function to evaluate how good the model fit was using r squared value, confidence intervals and percentage difference of predictions
 def evaluate_prediction(results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3,  y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3,y):
-  chosen_basis, predictions, r_squared_value = pick_basis(results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3)
+  chosen_basis, predictions, r_squared_value = pick_basis(results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3, y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3,y)
   percentage_difference = np.abs(y - predictions) / np.abs(y) * 100
   average_percentage_difference = np.mean(percentage_difference)
   lower_bound, upper_bound = confidence_intervals(y, predictions, 0.95)
