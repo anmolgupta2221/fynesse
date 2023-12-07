@@ -157,17 +157,17 @@ def sigmoidish(x):
     return ((1 / (1 + np.exp(-0.3 * x))) - 0.5)
 
 # Function to pick the basis vector and outputs the equivalent predictions and r squared value
-def pick_basis(results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3, y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3,y):
-  bases = [results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3]
-  predictions = [y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3]
-  highest = 0
-  index = 0
-  for i,predictions in enumerate(predictions):
-    current = r_squared_calc(predictions[i], y)
-    if current > highest:
-      highest = current
-      index = i
-  return (bases[index], predictions[index], highest)
+def pick_basis(results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3, y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3, y):
+    bases = [results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3]
+    predictions = [y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3]
+    highest = 0
+    index = 0
+    for i, current_predictions in enumerate(predictions):
+        current = r_squared_calc(current_predictions, y)
+        if current > highest:
+            highest = current
+            index = i
+    return (bases[index], predictions[index], highest)
 
 # function to evaluate how good the model fit was using r squared value, confidence intervals and percentage difference of predictions
 def evaluate_prediction(results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3,  y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3,y):
