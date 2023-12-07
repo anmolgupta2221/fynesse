@@ -182,7 +182,10 @@ def evaluate_prediction(results_basis, results_basis_0, results_basis_1, results
     bad_indicator_count += 1
   elif (r_squared_value < 0.4):
     bad_indicator_count += 1
-  return (r_squared_value, average_percentage_difference, filtered_percentage_difference, bad_indicator_count)
+  if (bad_indicator_count >= 2):
+     print({f"This prediction may be poor as the r_squared_value is {r_squared_value}, the average percentage difference between the predicted prices and actual prices is {average_percentage_difference}% with outliers and {filtered_percentage_difference} without outliers"})
+  print(results_basis.summary())   
+  return (r_squared_value, average_percentage_difference, filtered_percentage_difference, bad_indicator_count, chosen_basis, predictions)
 
 # function to calculate confidence intervals
 def confidence_intervals(y, predictions, confidence = 0.95):
@@ -215,6 +218,16 @@ def remove_outliers_percentage_difference(percentage_difference, iqr_factor=1.5)
 
     return filtered_percentage_difference
 
+# function to determine which of two options is more common in a df column.
+def more_prevalent(df, col, indicator1, indicator2):
+  counts = df[col].value_counts()
+  if counts[indicator1] > counts[indicator2]:
+    flag = 1
+  else:
+    flag = 0
+  return flag
+
+
 # count the number of features in bounding box based on pois
 def osm_feature_count(df, amenities, schools, healthcare, leisure, public_transport, threshold):
   amenity_count = np.array(df.apply(count_matching_pois, pois=amenities, threshold=threshold, axis=1)) 
@@ -224,17 +237,25 @@ def osm_feature_count(df, amenities, schools, healthcare, leisure, public_transp
   p_trans_count = np.array(df.apply(count_matching_pois, pois=public_transport, threshold = threshold, axis=1))
   return(amenity_count, school_count, healthcare_count, leisure_count, p_trans_count)
 
-def fit_and_predict(latitude, longitude, date, conn, property_box_size = 0.01, date_range = 1, osm_box_size = 0.02, feature_decider = 'variation 1', threshold = 0.01):
+def features_1(latitude, longitude, date, conn, property_box_size = 0.01, date_range = 1, osm_box_size = 0.02, feature_decider = 'variation 1', threshold = 0.01):
   df = extract_relevant_df(latitude, longitude, date, property_box_size, date_range, conn)
+  tenure_flag = more_prevalent(df, "tenure_type", "F", "L")
+  new_build_flag = more_prevalent(df, "new_build_flag", "Y", "N")
   detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l = property_prices_features(df)
   pois, _,_,_,_ = assess.get_geometries(latitude, longitude, osm_box_size, {'amenity':True, 'healthcare':True, 'leisure':True, 'public_transport':True})
   pois = adjust_pois(pois)
   amenities, schools, healthcare, leisure, public_transport = relevant_pois(pois)
+  return(latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, df, tenure_flag, new_build_flag, property_box_size = 0.01, date_range = 1, osm_box_size = 0.02, feature_decider = 'variation 1', threshold = 0.01)
+
+def features_2(latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, df, tenure_flag, new_build_flag, property_box_size = 0.01, date_range = 1, osm_box_size = 0.02, feature_decider = 'variation 1', threshold = 0.01)
   amenity_count, school_count, healthcare_count, leisure_count, p_trans_count = osm_feature_count(df, amenities, schools, healthcare, leisure, public_transport, threshold)
   if (feature_decider == 'count'):
     amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature = amenity_count, school_count, healthcare_count, leisure_count, p_trans_count
   elif (feature_decider == 'variation 1'):
-    amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature = np.sqrt(amenity_count), sigmoidish(school_count), np.array(df.apply(closest_pois_distance, pois=pois, axis=1)), leisure_count, np.array(df.apply(count_matching_pois, pois=public_transport, threshold = threshold, axis=1))
+    amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature = np.sqrt(amenity_count), sigmoidish(school_count), np.array(df.apply(closest_pois_distance, pois=pois, axis=1)), leisure_count, np.array(df.apply(count_matching_pois, pois=public_transport, threshold = threshold/2, axis=1))
+  return(detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature, tenure_flag, new_build_flag, conn)  
+  
+def make_predictions(detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature, tenure_flag, new_build_flag):
   design = np.concatenate((detatched.reshape(-1,1), semi_detatched.reshape(-1,1), terraced.reshape(-1,1),
                            flat.reshape(-1,1), other.reshape(-1,1), new_build.reshape(-1,1), tenure_type_f.reshape(-1,1), 
                            tenure_type_l.reshape(-1,1), amenity_feature.reshape(-1,1), school_feature.reshape(-1,1), healthcare_feature.reshape(-1,1),
@@ -243,5 +264,42 @@ def fit_and_predict(latitude, longitude, date, conn, property_box_size = 0.01, d
   y += 0.05*np.random.randn(len(df))
   results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3 = fit_model(y, design)
   y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3 = predict_model(design, results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3)
-  return (results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3, y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3, y)
+  return (results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3, y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3, y, new_build_flag, tenure_flag)
 
+def final_prediction(latitude, longitude, date, property_type, conn):
+    detatched_acc, semi_detatched_acc, terraced_acc, flat_acc, other_acc = 0
+    if property_type == 'D':
+      detatched_acc = 1
+    elif property_type == 'S':
+      semi_detatched_acc = 1
+    elif property_type == 'T':
+      terraced_acc = 1
+    elif property_type == 'F':
+      semi_detatched_acc = 1
+    else:
+      other_acc = 1
+    tenure_type_f_acc, tenure_type_l_acc = 0
+    if tenure_flag == 1:
+      tenure_type_f_acc = 1
+    else:
+      tenure_type_l_acc = 1
+    dummy_df = {
+    'latitude': [latitude],
+    'longitude': [longitude]}
+    dummy_df = pd.DataFrame(dummy_df)
+    latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, df, property_box_size, date_range, osm_box_size, feature_decider, threshold = fynesse.address.features_1(latitude, longitude, date, conn)
+    detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature, tenure_flag, new_build_flag, conn= features_2(latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, dummy_df, tenure_flag, new_build_flag, property_box_size, date_range, osm_box_size, feature_decider, threshold)
+    design = np.concatenate((detatched_acc.reshape(-1,1), semi_detatched_acc.reshape(-1,1), terraced_acc.reshape(-1,1),
+                           flat_acc.reshape(-1,1), other_acc.reshape(-1,1), new_build_acc.reshape(-1,1), tenure_type_f_acc.reshape(-1,1), 
+                           tenure_type_l_acc.reshape(-1,1), amenity_feature.reshape(-1,1), school_feature.reshape(-1,1), healthcare_feature.reshape(-1,1),
+                           p_trans_feature.reshape(-1,1), leisure_feature.reshape(-1,1)),axis=1)
+
+    return (chosen_basis.predict(design))
+
+def predict_price(latitude, longitude, date, property_type):
+    latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, df, tenure_flag, new_build_flag, property_box_size, date_range, osm_box_size, feature_decider, threshold = fynesse.address.features_1(latitude, longitude, date, conn)
+    detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature, tenure_flag, new_build_flag, conn= features_2(latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, df, tenure_flag, new_build_flag, property_box_size, date_range, osm_box_size, feature_decider, threshold)
+    results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3, y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3,y, new_build, tenure_type = fynesse.address.make_predictions(detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature, tenure_flag, new_build_flag)
+    r_squared_value, average_percentage_difference, filtered_percentage_difference, bad_indicator, chosen_basis, predictions = fynesse.address.evaluate_prediction(results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3,  y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3,y)
+    final_price = final_prediction(latitude, longitude, date, property_type, conn)
+    return (final_price)
