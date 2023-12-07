@@ -162,8 +162,8 @@ def pick_basis(results_basis, results_basis_0, results_basis_1, results_basis_2,
   predictions = [y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3]
   highest = 0
   index = 0
-  for i,basis in enumerate(bases):
-    current = r_squared_calc(basis, y)
+  for i,predictions in enumerate(predictions):
+    current = r_squared_calc(predictions[i], y)
     if current > highest:
       highest = current
       index = i
