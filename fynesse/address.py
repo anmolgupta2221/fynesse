@@ -174,8 +174,15 @@ def evaluate_prediction(results_basis, results_basis_0, results_basis_1, results
   chosen_basis, predictions, r_squared_value = pick_basis(results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3, y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3,y)
   percentage_difference = np.abs(y - predictions) / np.abs(y) * 100
   average_percentage_difference = np.mean(percentage_difference)
-  lower_bound, upper_bound, confidence = confidence_intervals(y, predictions, 0.95)
-  return (r_squared_value, percentage_difference, average_percentage_difference, lower_bound, upper_bound, confidence)
+  filtered_percentage_difference = remove_outliers_percentage_difference(percentage_difference)
+  bad_indicator_count = 0
+  if (filtered_percentage_difference - average_percentage_difference) > 0.2:
+    bad_indicator_count += 1
+  elif (filtered_percentage_difference > 0.25):
+    bad_indicator_count += 1
+  elif (r_squared_value < 0.4):
+    bad_indicator_count += 1
+  return (r_squared_value, average_percentage_difference, filtered_percentage_difference, bad_indicator_count)
 
 # function to calculate confidence intervals
 def confidence_intervals(y, predictions, confidence = 0.95):
@@ -189,8 +196,26 @@ def confidence_intervals(y, predictions, confidence = 0.95):
   upper_bound = mean_error + margin_of_error
   return lower_bound, upper_bound, confidence
 
+# remove outliers and calculate average for percentage difference
+def remove_outliers_percentage_difference(percentage_difference, iqr_factor=1.5):
+    # Calculate IQR for percentage difference
+    q1 = np.percentile(percentage_difference, 25)
+    q3 = np.percentile(percentage_difference, 75)
+    iqr = q3 - q1
 
+    # Define lower and upper bounds for outlier detection
+    lower_bound = q1 - iqr_factor * iqr
+    upper_bound = q3 + iqr_factor * iqr
 
+    # Identify indices of outliers
+    outliers_indices = np.where((percentage_difference < lower_bound) | (percentage_difference > upper_bound))[0]
+
+    # Filter out outliers from percentage difference and corresponding indices in 'data' and 'y'
+    filtered_percentage_difference = np.mean(np.delete(percentage_difference, outliers_indices))
+
+    return filtered_percentage_difference
+
+# count the number of features in bounding box based on pois
 def osm_feature_count(df, amenities, schools, healthcare, leisure, public_transport, threshold):
   amenity_count = np.array(df.apply(count_matching_pois, pois=amenities, threshold=threshold, axis=1)) 
   school_count = np.array(df.apply(count_matching_pois, pois=schools, threshold = threshold, axis=1))
