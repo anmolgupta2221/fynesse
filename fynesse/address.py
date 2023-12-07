@@ -29,6 +29,7 @@ from ukpostcodeutils import validation
 from datetime import datetime, timedelta
 from scipy.spatial.distance import cdist
 import yaml
+from scipy.stats import t
 
 # Helper function for applying indicator functions to features
 def indicator_function(row, feature, column_name):
@@ -155,6 +156,39 @@ def closest_pois_distance(row, pois):
 def sigmoidish(x):
     return ((1 / (1 + np.exp(-0.3 * x))) - 0.5)
 
+# Function to pick the basis vector and outputs the equivalent predictions and r squared value
+def pick_basis(results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3, y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3,y):
+  bases = [results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3]
+  predictions = [y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3]
+  highest = 0
+  index = 0
+  for i,basis in enumerate(bases):
+    current = r_squared_calc(basis)
+    if current > highest:
+      highest = current
+      index = i
+  return (bases[index], predictions[index], highest)
+
+# function to evaluate how good the model fit was using r squared value, confidence intervals and percentage difference of predictions
+def evaluate_prediction(results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3,  y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3,y):
+  chosen_basis, predictions, r_squared_value = pick_basis(results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3)
+  percentage_difference = np.abs(y - predictions) / np.abs(y) * 100
+  average_percentage_difference = np.mean(percentage_difference)
+  lower_bound, upper_bound = confidence_intervals(y, predictions, 0.95)
+
+# function to calculate confidence intervals
+def confidence_intervals(y, predictions, confidence = 0.95)
+  errors = y - predictions
+  n = len(errors)
+  mean_error = np.mean(errors)
+  standard_error = np.std(errors, ddof=1) / np.sqrt(n)
+  t_value = t.ppf((1 + confidence) / 2, n - 1)
+  margin_of_error = t_value * standard_error
+  lower_bound = mean_error - margin_of_error
+  upper_bound = mean_error + margin_of_error
+  return lower_bound, upper_bound
+
+
 
 def osm_feature_count(df, amenities, schools, healthcare, leisure, public_transport, threshold):
   amenity_count = np.array(df.apply(count_matching_pois, pois=amenities, threshold=threshold, axis=1)) 
@@ -183,5 +217,5 @@ def fit_and_predict(latitude, longitude, date, conn, property_box_size = 0.01, d
   y += 0.05*np.random.randn(len(df))
   results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3 = fit_model(y, design)
   y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3 = predict_model(design, results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3)
-  return (results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3, y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3)
+  return (results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3, y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3, y)
 
