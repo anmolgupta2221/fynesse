@@ -57,6 +57,15 @@ def feature_picker(df,column):
   else:
     return df[df[column].notna()]
 
+# Pick out relevant features from df 
+def relevant_pois(pois):
+  amenities = feature_picker(pois, "amenity")
+  schools = amenities[amenities["amenity"] == 'school']
+  healthcare = feature_picker(pois, "healthcare")
+  leisure = feature_picker(pois, "leisure")
+  public_transport = feature_picker(pois, "public_transport")
+  return(amenities, schools, healthcare, leisure, public_transport)
+
 # Fit the model based on y data and design matrix 
 def fit_model(y, design):
   m_linear_basis = sm.OLS(y,design)
