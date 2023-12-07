@@ -163,7 +163,7 @@ def pick_basis(results_basis, results_basis_0, results_basis_1, results_basis_2,
   highest = 0
   index = 0
   for i,basis in enumerate(bases):
-    current = r_squared_calc(basis)
+    current = r_squared_calc(basis, y)
     if current > highest:
       highest = current
       index = i
