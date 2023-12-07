@@ -95,6 +95,7 @@ def extract_relevant_df(latitude, longitude, date, property_box_size, date_range
 
 # Setup all the features from the property_prices database using the indicator functions
 def property_prices_features(df):
+  print(df)
   detatched = indicator('D', 'property_type', df)
   semi_detatched = indicator('S', 'property_type', df)
   flat = indicator('F', 'property_type', df)
