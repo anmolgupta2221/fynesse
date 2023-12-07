@@ -267,7 +267,7 @@ def make_predictions(detatched, semi_detatched, flat, terraced, other, new_build
   return (results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3, y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3, y, new_build_flag, tenure_flag)
 
 def final_prediction(latitude, longitude, date, property_type, conn, chosen_basis):
-    detatched_acc, semi_detatched_acc, terraced_acc, flat_acc, other_acc = 0
+    detatched_acc, semi_detatched_acc, terraced_acc, flat_acc, other_acc = {0,0,0,0,0}
     if property_type == 'D':
       detatched_acc = 1
     elif property_type == 'S':
@@ -278,7 +278,7 @@ def final_prediction(latitude, longitude, date, property_type, conn, chosen_basi
       semi_detatched_acc = 1
     else:
       other_acc = 1
-    tenure_type_f_acc, tenure_type_l_acc = 0
+    tenure_type_f_acc, tenure_type_l_acc = {0,0}
     if tenure_flag == 1:
       tenure_type_f_acc = 1
     else:
