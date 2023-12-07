@@ -174,7 +174,7 @@ def fit_and_predict(latitude, longitude, date, conn, property_box_size = 0.01, d
   if (feature_decider == 'count'):
     amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature = amenity_count, school_count, healthcare_count, leisure_count, p_trans_count
   elif (feature_decider == 'variation 1'):
-    amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature = np.sqrt(amenity_count), sigmoidish(school_count), np.array(df.apply(closest_pois_distance, pois=pois, df=df, axis=1)), leisure_count, np.array(df.apply(count_matching_pois, pois=public_transport, threshold = threshold, axis=1))
+    amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature = np.sqrt(amenity_count), sigmoidish(school_count), np.array(df.apply(closest_pois_distance, pois=pois, axis=1)), leisure_count, np.array(df.apply(count_matching_pois, pois=public_transport, threshold = threshold, axis=1))
   design = np.concatenate((detatched.reshape(-1,1), semi_detatched.reshape(-1,1), terraced.reshape(-1,1),
                            flat.reshape(-1,1), other.reshape(-1,1), new_build.reshape(-1,1), tenure_type_f.reshape(-1,1), 
                            tenure_type_l.reshape(-1,1), amenity_feature.reshape(-1,1), school_feature.reshape(-1,1), healthcare_feature.reshape(-1,1),
