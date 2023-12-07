@@ -91,7 +91,6 @@ def extract_relevant_df(latitude, longitude, date, property_box_size, date_range
   all_years_properties = access.joinq(conn, latitude, longitude, property_box_size)
   input_date = datetime.strptime(date, "%B %Y")
   relevant_years_properties = all_years_properties[(all_years_properties['date_of_transfer'] >= (input_date - timedelta(days=365*date_range))) & (all_years_properties['date_of_transfer'] <= (input_date + timedelta(days=365*date_range)))]
-  print(relevant_years_properties)
   return relevant_years_properties 
 
 # Setup all the features from the property_prices database using the indicator functions
@@ -103,7 +102,10 @@ def property_prices_features(df):
   other = indicator('O', 'property_type', df)
   new_build = indicator('Y', 'new_build_flag', df)
   tenure_type_f = indicator('F', 'tenure_type', df)
-  tenure_type_l = indicator('L', 'tenure_type', df)
+  try:
+    tenure_type_l = indicator('L', 'tenure_type', df)
+  except KeyError:
+    tenure_type_l
   return (detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l)
 
 # Function to count matching records in pois for each row in df
