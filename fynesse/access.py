@@ -173,7 +173,3 @@ def joinq(conn, lat, longit, box_size = 0.4):
     property_prices_df = pd.read_sql_query(query, conn)
     property_prices_df['date_of_transfer'] = pd.to_datetime(property_prices_df['date_of_transfer'])
     return property_prices_df
-
-def data():
-    """Read the data from the web or local file, returning structured format such as a data frame"""
-    print('hello world')
