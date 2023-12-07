@@ -177,7 +177,7 @@ def evaluate_prediction(results_basis, results_basis_0, results_basis_1, results
   lower_bound, upper_bound = confidence_intervals(y, predictions, 0.95)
 
 # function to calculate confidence intervals
-def confidence_intervals(y, predictions, confidence = 0.95)
+def confidence_intervals(y, predictions, confidence = 0.95):
   errors = y - predictions
   n = len(errors)
   mean_error = np.mean(errors)
