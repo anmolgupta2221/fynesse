@@ -91,6 +91,7 @@ def extract_relevant_df(latitude, longitude, date, property_box_size, date_range
   all_years_properties = access.joinq(conn, latitude, longitude, property_box_size)
   input_date = datetime.strptime(date, "%B %Y")
   relevant_years_properties = all_years_properties[(all_years_properties['date_of_transfer'] >= (input_date - timedelta(days=365*date_range))) & (all_years_properties['date_of_transfer'] <= (input_date + timedelta(days=365*date_range)))]
+  print(relevant_years_properties)
   return relevant_years_properties 
 
 # Setup all the features from the property_prices database using the indicator functions
