@@ -312,3 +312,19 @@ def predict_price(latitude, longitude, date, property_type, conn):
     print(f"The r_squared_value for the linear regression was {r_squared_value}. The average_percentage_difference between each house price and the predicted house price was {average_percentage_difference} and the percentage difference after removing the outliers is {filtered_percentage_difference} ")
     final_price = final_prediction(latitude, longitude, date, property_type, conn, chosen_basis, tenure_flag, new_build_flag)
     return (final_price, percentage_difference)
+
+# plot histogram of percentages
+def plot_percentage_histogram(percentages):
+    # Define bin edges
+    bins = [0, 10, 20, 30, 40, 100]
+
+    # Create histogram
+    histogram, bin_edges = np.histogram(percentages, bins=bins)
+
+    # Plot the histogram
+    plt.bar(range(len(histogram)), histogram, align='center', alpha=0.7)
+    plt.xticks(range(len(bins) - 1), [f"{bins[i]}-{bins[i+1]}" for i in range(len(bins) - 1)])
+    plt.xlabel('Percentage Ranges')
+    plt.ylabel('Count')
+    plt.title('Histogram of Percentages')
+    plt.show()
