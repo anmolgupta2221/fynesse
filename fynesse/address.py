@@ -302,4 +302,4 @@ def predict_price(latitude, longitude, date, property_type):
     results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3, y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3,y, new_build, tenure_type = fynesse.address.make_predictions(detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature, tenure_flag, new_build_flag)
     r_squared_value, average_percentage_difference, filtered_percentage_difference, bad_indicator, chosen_basis, predictions = fynesse.address.evaluate_prediction(results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3,  y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3,y)
     final_price = final_prediction(latitude, longitude, date, property_type, conn)
-    return (final_price)
+    return (final_price, average_percentage_difference)
