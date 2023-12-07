@@ -237,7 +237,7 @@ def osm_feature_count(df, amenities, schools, healthcare, leisure, public_transp
   p_trans_count = np.array(df.apply(count_matching_pois, pois=public_transport, threshold = threshold, axis=1))
   return(amenity_count, school_count, healthcare_count, leisure_count, p_trans_count)
 
-def features_1(latitude, longitude, date, conn, property_box_size = 0.01, date_range = 1, osm_box_size = 0.03, feature_decider = 'variation 1', threshold = 0.015):
+def features_1(latitude, longitude, date, conn, property_box_size = 0.015, date_range = 1, osm_box_size = 0.03, feature_decider = 'variation 1', threshold = 0.015):
   df = extract_relevant_df(latitude, longitude, date, property_box_size, date_range, conn)
   tenure_flag = more_prevalent(df, "tenure_type", "F", "L")
   new_build_flag = more_prevalent(df, "new_build_flag", "Y", "N")
