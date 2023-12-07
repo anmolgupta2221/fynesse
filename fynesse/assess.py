@@ -76,7 +76,7 @@ def dataframe_index_cleanup(df):
 def unique_vals_col(df, col):
    return df[col].unique()
 
-
+# check whether postcode is valid
 def validate_postcode(pcode):
     if validation.is_valid_postcode(pcode):
         return True
@@ -131,15 +131,6 @@ def capitalize_and_remove_underscores(input_string):
   if type(input_string) == str:
     result_string = input_string.replace('_', ' ').title()
     return result_string
-
-
-def query(data):
-    """Request user input for some aspect of the data."""
-    raise NotImplementedError
-
-def view(data):
-    """Provide a view of the data that allows the user to verify some aspect of its quality."""
-    raise NotImplementedError
 
 def labelled(data):
     data = dataframe_index_cleanup(data)
