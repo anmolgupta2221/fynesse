@@ -174,8 +174,8 @@ def evaluate_prediction(results_basis, results_basis_0, results_basis_1, results
   chosen_basis, predictions, r_squared_value = pick_basis(results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3, y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3,y)
   percentage_difference = np.abs(y - predictions) / np.abs(y) * 100
   average_percentage_difference = np.mean(percentage_difference)
-  lower_bound, upper_bound = confidence_intervals(y, predictions, 0.95)
-  return (r_squared_value, percentage_difference, average_percentage_difference, lower_bound, upper_bound)
+  lower_bound, upper_bound, confidence = confidence_intervals(y, predictions, 0.95)
+  return (r_squared_value, percentage_difference, average_percentage_difference, lower_bound, upper_bound, confidence)
 
 # function to calculate confidence intervals
 def confidence_intervals(y, predictions, confidence = 0.95):
@@ -187,7 +187,7 @@ def confidence_intervals(y, predictions, confidence = 0.95):
   margin_of_error = t_value * standard_error
   lower_bound = mean_error - margin_of_error
   upper_bound = mean_error + margin_of_error
-  return lower_bound, upper_bound
+  return lower_bound, upper_bound, confidence
 
 
 
