@@ -324,7 +324,7 @@ def plot_percentage_histogram(percentages):
     # Plot the histogram
     plt.bar(range(len(histogram)), histogram, align='center', alpha=0.7)
     plt.xticks(range(len(bins) - 1), [f"{bins[i]}-{bins[i+1]}" for i in range(len(bins) - 1)])
-    plt.xlabel('Percentage Ranges')
+    plt.xlabel('Percentage difference ranges')
     plt.ylabel('Count')
-    plt.title('Histogram of Percentages')
+    plt.title('Histogram of Percentage differences between prediction and actual value')
     plt.show()
