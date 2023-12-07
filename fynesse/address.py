@@ -292,13 +292,6 @@ def final_prediction(latitude, longitude, date, property_type, conn, chosen_basi
     'longitude': [longitude]}
     dummy_df = pd.DataFrame(dummy_df)
     latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, pois, df, tenure_flag, new_build_flag, property_box_size, date_range, osm_box_size, feature_decider, threshold = features_1(latitude, longitude, date, conn)
-    print(df)
-    print(pois)
-    print(amenities)
-    print(schools)
-    print(healthcare)
-    print(leisure)
-    print(public_transport)
     detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature, tenure_flag, new_build_flag, conn= features_2(latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, dummy_df, tenure_flag, new_build_flag, property_box_size, date_range, osm_box_size, feature_decider, threshold)
     design = np.concatenate((detatched_acc.reshape(-1,1), semi_detatched_acc.reshape(-1,1), terraced_acc.reshape(-1,1),
                            flat_acc.reshape(-1,1), other_acc.reshape(-1,1), new_build_acc.reshape(-1,1), tenure_type_f_acc.reshape(-1,1), 
