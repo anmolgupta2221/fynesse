@@ -297,7 +297,7 @@ def final_prediction(latitude, longitude, date, property_type, conn):
     return (chosen_basis.predict(design))
 
 def predict_price_wrapper(latitude, longitude, date, property_type, conn):
-    predict_price((latitude, longitude, date, property_type))
+    return predict_price(latitude, longitude, date, property_type)
 
 def predict_price(latitude, longitude, date, property_type):
     latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, df, tenure_flag, new_build_flag, property_box_size, date_range, osm_box_size, feature_decider, threshold = features_1(latitude, longitude, date, conn)
