@@ -175,7 +175,7 @@ def evaluate_prediction(results_basis, results_basis_0, results_basis_1, results
   percentage_difference = np.abs(y - predictions) / np.abs(y) * 100
   average_percentage_difference = np.mean(percentage_difference)
   lower_bound, upper_bound = confidence_intervals(y, predictions, 0.95)
-  return (r_squared_value, percentage_difference, average_percentage_difference, lower_bound, upper_bound, confidence)
+  return (r_squared_value, percentage_difference, average_percentage_difference, lower_bound, upper_bound)
 
 # function to calculate confidence intervals
 def confidence_intervals(y, predictions, confidence = 0.95):
