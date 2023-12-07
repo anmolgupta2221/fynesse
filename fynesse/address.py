@@ -245,9 +245,9 @@ def features_1(latitude, longitude, date, conn, property_box_size = 0.01, date_r
   pois, _,_,_,_ = assess.get_geometries(latitude, longitude, osm_box_size, {'amenity':True, 'healthcare':True, 'leisure':True, 'public_transport':True})
   pois = adjust_pois(pois)
   amenities, schools, healthcare, leisure, public_transport = relevant_pois(pois)
-  return (latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, df, tenure_flag, new_build_flag, property_box_size, date_range, osm_box_size, feature_decider, threshold)
+  return (latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, pois, df, tenure_flag, new_build_flag, property_box_size, date_range, osm_box_size, feature_decider, threshold)
 
-def features_2(latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, df, tenure_flag, new_build_flag, property_box_size = 0.01, date_range = 1, osm_box_size = 0.02, feature_decider = 'variation 1', threshold = 0.01):
+def features_2(latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, pois, df, tenure_flag, new_build_flag, property_box_size = 0.01, date_range = 1, osm_box_size = 0.02, feature_decider = 'variation 1', threshold = 0.01):
   amenity_count, school_count, healthcare_count, leisure_count, p_trans_count = osm_feature_count(df, amenities, schools, healthcare, leisure, public_transport, threshold)
   if (feature_decider == 'count'):
     amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature = amenity_count, school_count, healthcare_count, leisure_count, p_trans_count
@@ -266,7 +266,7 @@ def make_predictions(detatched, semi_detatched, flat, terraced, other, new_build
   y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3 = predict_model(design, results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3)
   return (results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3, y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3, y, new_build_flag, tenure_flag)
 
-def final_prediction(latitude, longitude, date, property_type, conn):
+def final_prediction(latitude, longitude, date, property_type, conn, chosen_basis):
     detatched_acc, semi_detatched_acc, terraced_acc, flat_acc, other_acc = 0
     if property_type == 'D':
       detatched_acc = 1
@@ -283,11 +283,15 @@ def final_prediction(latitude, longitude, date, property_type, conn):
       tenure_type_f_acc = 1
     else:
       tenure_type_l_acc = 1
+    if new_build_flag == 1:
+      new_build_acc = 1
+    else:
+      new_build_acc = 1
     dummy_df = {
     'latitude': [latitude],
     'longitude': [longitude]}
     dummy_df = pd.DataFrame(dummy_df)
-    latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, df, property_box_size, date_range, osm_box_size, feature_decider, threshold = features_1(latitude, longitude, date, conn)
+    latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, pois, df, property_box_size, date_range, osm_box_size, feature_decider, threshold = features_1(latitude, longitude, date, conn)
     detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature, tenure_flag, new_build_flag, conn= features_2(latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, dummy_df, tenure_flag, new_build_flag, property_box_size, date_range, osm_box_size, feature_decider, threshold)
     design = np.concatenate((detatched_acc.reshape(-1,1), semi_detatched_acc.reshape(-1,1), terraced_acc.reshape(-1,1),
                            flat_acc.reshape(-1,1), other_acc.reshape(-1,1), new_build_acc.reshape(-1,1), tenure_type_f_acc.reshape(-1,1), 
@@ -298,9 +302,9 @@ def final_prediction(latitude, longitude, date, property_type, conn):
 
 def predict_price(latitude, longitude, date, property_type, conn):
     latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, df, tenure_flag, new_build_flag, property_box_size, date_range, osm_box_size, feature_decider, threshold = features_1(latitude, longitude, date, conn)
-    detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature, tenure_flag, new_build_flag, conn= features_2(latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, df, tenure_flag, new_build_flag, property_box_size, date_range, osm_box_size, feature_decider, threshold)
+    detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature, tenure_flag, new_build_flag, conn= features_2(latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, pois, df, tenure_flag, new_build_flag, property_box_size, date_range, osm_box_size, feature_decider, threshold)
     results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3, y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3,y, new_build, tenure_type = make_predictions(detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature, tenure_flag, new_build_flag)
     r_squared_value, average_percentage_difference, filtered_percentage_difference, bad_indicator, chosen_basis, predictions = evaluate_prediction(results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3,  y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3,y)
     print(f"The r_squared_value for the linear regression was {r_squared_value}, and the confidence interval with confidence {confidence*100}% was {lower_bound}, {upper_bound}. The average_percentage_difference between each house price and the predicted house price was {average_percentage_difference}")
-    final_price = final_prediction(latitude, longitude, date, property_type, conn)
+    final_price = final_prediction(latitude, longitude, date, property_type, conn, chosen_basis)
     return (final_price, average_percentage_difference)
