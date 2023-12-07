@@ -132,6 +132,7 @@ def capitalize_and_remove_underscores(input_string):
     result_string = input_string.replace('_', ' ').title()
     return result_string
 
+# Clean some data columns
 def labelled(data):
     data = dataframe_index_cleanup(data)
     if 'addr:postcode' in data.columns:
