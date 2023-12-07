@@ -175,6 +175,10 @@ def evaluate_prediction(results_basis, results_basis_0, results_basis_1, results
   percentage_difference = np.abs(y - predictions) / np.abs(y) * 100
   average_percentage_difference = np.mean(percentage_difference)
   lower_bound, upper_bound = confidence_intervals(y, predictions, 0.95)
+  print(f"The r_squared_value for the linear regression was {r_squared_value}, and the confidence interval with 
+        confidence {confidence*100}% was {lower_bound}, {upper_bound}. The average_percentage_difference 
+        between each house price and the predicted house price was {average_percentage_difference}")
+  return (r_squared_value, percentage_difference, average_percentage_difference, lower_bound, upper_bound, confidence)
 
 # function to calculate confidence intervals
 def confidence_intervals(y, predictions, confidence = 0.95):
