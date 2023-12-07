@@ -38,7 +38,7 @@ def indicator_function(row, feature, column_name):
         return 0
 
 # Indicator function applier
-def indicator(feature, column_name):
+def indicator(feature, column_name, df):
   return np.array(df.apply(lambda row: indicator_function(row, feature, column_name), axis=1))
 
 # Takes a geodatafram and returns a tuple for the latitude and longitude of every row calculated using the centroid
