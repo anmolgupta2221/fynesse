@@ -245,9 +245,9 @@ def features_1(latitude, longitude, date, conn, property_box_size = 0.01, date_r
   pois, _,_,_,_ = assess.get_geometries(latitude, longitude, osm_box_size, {'amenity':True, 'healthcare':True, 'leisure':True, 'public_transport':True})
   pois = adjust_pois(pois)
   amenities, schools, healthcare, leisure, public_transport = relevant_pois(pois)
-  return(latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, df, tenure_flag, new_build_flag, property_box_size = 0.01, date_range = 1, osm_box_size = 0.02, feature_decider = 'variation 1', threshold = 0.01)
+  return (latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, df, tenure_flag, new_build_flag, property_box_size, date_range, osm_box_size, feature_decider, threshold)
 
-def features_2(latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, df, tenure_flag, new_build_flag, property_box_size = 0.01, date_range = 1, osm_box_size = 0.02, feature_decider = 'variation 1', threshold = 0.01)
+def features_2(latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, df, tenure_flag, new_build_flag, property_box_size = 0.01, date_range = 1, osm_box_size = 0.02, feature_decider = 'variation 1', threshold = 0.01):
   amenity_count, school_count, healthcare_count, leisure_count, p_trans_count = osm_feature_count(df, amenities, schools, healthcare, leisure, public_transport, threshold)
   if (feature_decider == 'count'):
     amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature = amenity_count, school_count, healthcare_count, leisure_count, p_trans_count
