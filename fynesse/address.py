@@ -124,7 +124,7 @@ def adjust_pois(pois):
   return pois
 
 #Function to calculate R squared value of prediction
-def r_squared_calc(prediction):
+def r_squared_calc(prediction, y):
   # Calculate the mean of the dependent variable
   y_mean = np.mean(y)
 
