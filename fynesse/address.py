@@ -266,7 +266,7 @@ def make_predictions(detatched, semi_detatched, flat, terraced, other, new_build
   y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3 = predict_model(design, results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3)
   return (results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3, y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3, y, new_build_flag, tenure_flag)
 
-def final_prediction(latitude, longitude, date, property_type, conn, chosen_basis):
+def final_prediction(latitude, longitude, date, property_type, conn, chosen_basis, tenure_flag, new_build_flag):
     detatched_acc, semi_detatched_acc, terraced_acc, flat_acc, other_acc = 0,0,0,0,0
     if property_type == 'D':
       detatched_acc = 1
@@ -306,5 +306,5 @@ def predict_price(latitude, longitude, date, property_type, conn):
     results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3, y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3,y, new_build, tenure_type = make_predictions(detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature, tenure_flag, new_build_flag, df)
     r_squared_value, average_percentage_difference, filtered_percentage_difference, bad_indicator, chosen_basis, predictions = evaluate_prediction(results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3,  y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3,y)
     print(f"The r_squared_value for the linear regression was {r_squared_value}. The average_percentage_difference between each house price and the predicted house price was {average_percentage_difference} and the percentage difference after removing the outliers is {filtered_percentage_difference} ")
-    final_price = final_prediction(latitude, longitude, date, property_type, conn, chosen_basis)
+    final_price = final_prediction(latitude, longitude, date, property_type, conn, chosen_basis, tenure_flag, new_build_flag)
     return (final_price, average_percentage_difference)
