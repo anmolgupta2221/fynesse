@@ -240,6 +240,7 @@ def osm_feature_count(df, amenities, schools, healthcare, leisure, public_transp
   p_trans_count = np.array(df.apply(count_matching_pois, pois=public_transport, threshold = threshold, axis=1))
   return(amenity_count, school_count, healthcare_count, leisure_count, p_trans_count)
 
+# Part 1 of extracting the features, initally the property_price features and then begin to extract OSM features
 def features_1(latitude, longitude, date, conn, property_box_size = 0.02, date_range = 1, osm_box_size = 0.03, feature_decider = 'variation 1', threshold = 0.015):
   df = extract_relevant_df(latitude, longitude, date, property_box_size, date_range, conn)
   tenure_flag = more_prevalent(df, "tenure_type", "F", "L")
@@ -250,6 +251,7 @@ def features_1(latitude, longitude, date, conn, property_box_size = 0.02, date_r
   amenities, schools, healthcare, leisure, public_transport = relevant_pois(pois)
   return (latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, pois, df, tenure_flag, new_build_flag, property_box_size, date_range, osm_box_size, feature_decider, threshold)
 
+# Part 2 of extracting the features, focus on OSM features
 def features_2(latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, pois, df, tenure_flag, new_build_flag, property_box_size = 0.01, date_range = 1, osm_box_size = 0.02, feature_decider = 'variation 1', threshold = 0.01):
   amenity_count, school_count, healthcare_count, leisure_count, p_trans_count = osm_feature_count(df, amenities, schools, healthcare, leisure, public_transport, threshold)
   if (feature_decider == 'count'):
@@ -257,7 +259,8 @@ def features_2(latitude, longitude, date, conn, detatched, semi_detatched, flat,
   elif (feature_decider == 'variation 1'):
     amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature = np.sqrt(amenity_count), sigmoidish(school_count), np.array(df.apply(closest_pois_distance, pois=pois, axis=1)), leisure_count, np.array(df.apply(count_matching_pois, pois=public_transport, threshold = threshold/2, axis=1))
   return(detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature, tenure_flag, new_build_flag, conn, df)  
-  
+
+# Takes the features, constructs a design matrix and trains the model
 def make_predictions(detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature, tenure_flag, new_build_flag, df):
   design = np.concatenate((detatched.reshape(-1,1), semi_detatched.reshape(-1,1), terraced.reshape(-1,1),
                            flat.reshape(-1,1), other.reshape(-1,1), new_build.reshape(-1,1), tenure_type_f.reshape(-1,1), 
@@ -269,6 +272,7 @@ def make_predictions(detatched, semi_detatched, flat, terraced, other, new_build
   y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3 = predict_model(design, results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3)
   return (results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3, y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3, y, new_build_flag, tenure_flag)
 
+# Uses the results basis from make_predictions function to determine the final predicted value
 def final_prediction(latitude, longitude, date, property_type, conn, chosen_basis, tenure_flag, new_build_flag):
     detatched_acc, semi_detatched_acc, terraced_acc, flat_acc, other_acc = 0,0,0,0,0
     if property_type == 'D':
@@ -304,7 +308,7 @@ def final_prediction(latitude, longitude, date, property_type, conn, chosen_basi
 
     return (chosen_basis.predict(design))
 
-#Overall 
+# Function which returns house price prediction
 def predict_price(latitude, longitude, date, property_type, conn):
     latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, pois, df, tenure_flag, new_build_flag, property_box_size, date_range, osm_box_size, feature_decider, threshold = features_1(latitude, longitude, date, conn)
     detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature, tenure_flag, new_build_flag, conn, df= features_2(latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, pois, df, tenure_flag, new_build_flag, property_box_size, date_range, osm_box_size, feature_decider, threshold)
