@@ -188,7 +188,7 @@ def evaluate_prediction(results_basis, results_basis_0, results_basis_1, results
   if (bad_indicator_count >= 2):
      print({f"This prediction may be poor as the r_squared_value is {r_squared_value}, the average percentage difference between the predicted prices and actual prices is {average_percentage_difference}% with outliers and {filtered_percentage_difference} without outliers"})
   print(results_basis.summary())   
-  return (r_squared_value, average_percentage_difference, filtered_percentage_difference, bad_indicator_count, chosen_basis, predictions)
+  return (r_squared_value, average_percentage_difference, percentage_difference, filtered_percentage_difference, bad_indicator_count, chosen_basis, predictions)
 
 # function to calculate confidence intervals
 def confidence_intervals(y, predictions, confidence = 0.95):
@@ -308,7 +308,7 @@ def predict_price(latitude, longitude, date, property_type, conn):
     latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, pois, df, tenure_flag, new_build_flag, property_box_size, date_range, osm_box_size, feature_decider, threshold = features_1(latitude, longitude, date, conn)
     detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature, tenure_flag, new_build_flag, conn, df= features_2(latitude, longitude, date, conn, detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenities, schools, healthcare, leisure, public_transport, pois, df, tenure_flag, new_build_flag, property_box_size, date_range, osm_box_size, feature_decider, threshold)
     results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3, y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3,y, new_build, tenure_type = make_predictions(detatched, semi_detatched, flat, terraced, other, new_build, tenure_type_f, tenure_type_l, amenity_feature, school_feature, healthcare_feature, leisure_feature, p_trans_feature, tenure_flag, new_build_flag, df)
-    r_squared_value, average_percentage_difference, filtered_percentage_difference, bad_indicator, chosen_basis, predictions = evaluate_prediction(results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3,  y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3,y)
+    r_squared_value, average_percentage_difference, percentage_difference, filtered_percentage_difference, bad_indicator, chosen_basis, predictions = evaluate_prediction(results_basis, results_basis_0, results_basis_1, results_basis_2, results_basis_3,  y_pred, y_pred_0, y_pred_1, y_pred_2, y_pred_3,y)
     print(f"The r_squared_value for the linear regression was {r_squared_value}. The average_percentage_difference between each house price and the predicted house price was {average_percentage_difference} and the percentage difference after removing the outliers is {filtered_percentage_difference} ")
     final_price = final_prediction(latitude, longitude, date, property_type, conn, chosen_basis, tenure_flag, new_build_flag)
-    return (final_price, average_percentage_difference)
+    return (final_price, percentage_difference)
